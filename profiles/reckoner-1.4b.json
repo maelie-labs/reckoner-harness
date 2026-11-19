@@ -1,0 +1,8 @@
+{
+  "name": "reckoner-1.4b",
+  "default_system": null,
+  "graded_answer_instruction": "Put your final answer within \\boxed{}.",
+  "anchors": true,
+  "effort_line": "off",
+  "notes": "Reckoner-1.4B (from-scratch hybrid GDN-2 + GQA, 36,864 vocabulary, anchored context tools, no default system prompt)."
+}

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sglang-reckoner"
+version = "1.1.3"
+description = "Out-of-tree SGLang 0.5.22 model adapter and in-engine tool processor for Reckoner-1.4B and Reckoner-Q2B"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.13"
+authors = [
+  { name = "Maelie Labs" },
+]
+dependencies = [
+  "sglang==0.5.22",
+  "flash-linear-attention==0.6.0",
+  "torch>=2.6.0",
+  "transformers>=4.48.0",
+  "tokenizers>=0.21.0",
+  "compressed-tensors>=0.9.0",
+  "grpcio>=1.60.0",
+  "protobuf>=4.25.0",
+  "numpy>=1.26.0",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8.0.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["sglang_reckoner*"]
+
+[tool.setuptools.package-data]
+sglang_reckoner = ["sglang_rl_env_lock.txt"]

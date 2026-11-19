@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "description": "Canonical system-turn prefix P emitted for effort_line='none_only' with reasoning_effort='none' and no caller or default system prompt.",
+  "note": "IDs of the Qwen3.5 Reckoner tokenizer (tokenizer SHA-256: 30bb95877a195a5dc4c4ef1d656d7f53664c1f4ed14b0c90abcd747303a3d265) and the embedded Reckoner-1.4B tokenizer (tokenizer SHA-256: cfd2fe72110bd5f90dff6767a7b44f2ee075dfefc150527dfdd85e9076d0bc60) for the string \"<|turn:system|>\\nreasoning_effort: none<|/turn|>\\n\".",
+  "prefix_text": "<|turn:system|>\nreasoning_effort: none<|/turn|>\n",
+  "qwen35_prefix_token_ids": [
+    248074,
+    198,
+    19290,
+    286,
+    50199,
+    366,
+    25,
+    6643,
+    248073,
+    198
+  ],
+  "reckoner_1p4b_prefix_token_ids": [
+    5,
+    326,
+    23025,
+    190,
+    5389,
+    11219,
+    153,
+    4684,
+    4,
+    326
+  ]
+}

@@ -1,0 +1,99 @@
+name: Test Cross-Compiled Binaries
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Cross-Compiled Binaries (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+
+      - name: Install Zig 0.14.1
+        run: |
+          curl -fsSL https://ziglang.org/download/0.14.1/zig-x86_64-linux-0.14.1.tar.xz | tar -xJ -C /tmp
+          sudo ln -s /tmp/zig-x86_64-linux-0.14.1/zig /usr/local/bin/zig
+          zig version
+
+      - name: Cross-compile 6 targets
+        run: bash scripts/build_harness.sh
+
+      - name: Log compiled binary checksums
+        run: |
+          python3 -c '
+          import os, hashlib
+          for bname in sorted(os.listdir("build/bin")):
+              p = os.path.join("build/bin", bname)
+              if os.path.isfile(p):
+                  sha = hashlib.sha256(open(p, "rb").read()).hexdigest()
+                  print(f"  {bname}: {sha}")
+          '
+
+      - name: Upload compiled binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-binaries
+          path: build/bin/
+          retention-days: 5
+
+  test-matrix:
+    name: Conformance (${{ matrix.platform }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.continue_on_error }}
+    env:
+      PYTHONUTF8: '1'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-amd64
+            os: ubuntu-latest
+            binary: build/bin/reckoner-harness-linux-amd64
+            continue_on_error: false
+          - platform: windows-amd64
+            os: windows-latest
+            binary: build/bin/reckoner-harness-windows-amd64.exe
+            continue_on_error: false
+          - platform: darwin-arm64
+            os: macos-latest
+            binary: build/bin/reckoner-harness-darwin-arm64
+            continue_on_error: false
+          - platform: linux-arm64
+            os: ubuntu-24.04-arm
+            binary: build/bin/reckoner-harness-linux-arm64
+            continue_on_error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Download compiled binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: harness-binaries
+          path: build/bin
+
+      - name: Make binary executable (Unix)
+        if: runner.os != 'Windows'
+        run: chmod +x ${{ matrix.binary }}
+
+      - name: Compute and verify binary SHA-256
+        run: python scripts/ci_check_binary.py ${{ matrix.binary }} ${{ matrix.platform }}
+
+      - name: Run Full Conformance Suite
+        run: python scripts/run_harness_conformance.py --binary ${{ matrix.binary }} --cases all

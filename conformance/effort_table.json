@@ -1,0 +1,38 @@
+{
+  "default": "medium",
+  "canonical": {
+    "none": {
+      "gate_mask_deliberate": true,
+      "thinking_budget": 0,
+      "loop_cap": 1
+    },
+    "minimal": {
+      "gate_mask_deliberate": true,
+      "thinking_budget": 0,
+      "loop_cap": 1
+    },
+    "low": {
+      "gate_mask_deliberate": false,
+      "thinking_budget": 256,
+      "loop_cap": 2
+    },
+    "medium": {
+      "gate_mask_deliberate": false,
+      "thinking_budget": 1024,
+      "loop_cap": 3
+    },
+    "high": {
+      "gate_mask_deliberate": false,
+      "thinking_budget": 4096,
+      "loop_cap": 4
+    }
+  },
+  "aliases": {
+    "fast": "low",
+    "careful": "high",
+    "xhigh": "high"
+  },
+  "notes": {
+    "loop_cap": "reserved, not enforced (latent depth-loop cap K_max)"
+  }
+}
